@@ -6,10 +6,13 @@ A Python program that can automatically perform tasks on websites using Playwrig
 
 - **Basic Browser Automation**: Control web browsers using Playwright
 - **Core Browser Actions**: Click, type, navigate, and interact with web elements
+- **Fixed Task Automation**: Complete automated workflows for specific tasks
+- **E-commerce Automation**: Real-world shopping and product search automation
 - **Element Interaction**: Get text, attributes, and handle multiple elements
 - **Page Navigation**: Back, forward, refresh, and scroll functionality
 - **Element Waiting**: Wait for elements to be visible, clickable, or in specific states
 - **Error Handling**: Robust error handling for reliable automation
+- **Edge Case Handling**: Handle slow loading, missing elements, and network issues
 - **Async Support**: Built with async/await for better performance
 - **Context Management**: Proper resource cleanup with context managers
 
@@ -122,15 +125,63 @@ async def my_automation():
 asyncio.run(my_automation())
 ```
 
+### Using Fixed Task Automation
+
+```python
+import asyncio
+from fixed_task_automation import FixedTaskAutomation
+
+async def run_fixed_task():
+    # Create fixed task automation
+    task_automation = FixedTaskAutomation(headless=True)
+    
+    # Run complete task
+    results = await task_automation.run_complete_task(
+        search_term="laptop",
+        url="https://httpbin.org/forms/post"
+    )
+    
+    print(f"Task completed: {results['navigation_success']}")
+    print(f"Results found: {len(results['search_results'])}")
+
+# Run the fixed task
+asyncio.run(run_fixed_task())
+```
+
+### Using E-commerce Task Automation
+
+```python
+import asyncio
+from ecommerce_task_automation import EcommerceTaskAutomation
+
+async def run_ecommerce_task():
+    # Create e-commerce task automation
+    task_automation = EcommerceTaskAutomation(headless=True)
+    
+    # Run complete e-commerce task
+    results = await task_automation.run_complete_task(
+        search_term="python",
+        url="https://books.toscrape.com/"
+    )
+    
+    print(f"Products found: {results['products_found']}")
+    print(f"Prices found: {len(results['prices_found'])}")
+
+# Run the e-commerce task
+asyncio.run(run_ecommerce_task())
+```
+
 ## Project Structure
 
 ```
 web-task-automator/
-├── browser_automation.py    # Main automation module
-├── requirements.txt         # Python dependencies
-├── setup.py                # Automated setup script
-├── README.md                # This file
-└── venv/                    # Virtual environment (created during setup)
+├── browser_automation.py           # Main automation module
+├── fixed_task_automation.py        # Fixed task automation
+├── ecommerce_task_automation.py    # E-commerce task automation
+├── requirements.txt                # Python dependencies
+├── setup.py                        # Automated setup script
+├── README.md                       # This file
+└── venv/                           # Virtual environment (created during setup)
 ```
 
 ## Dependencies
@@ -213,6 +264,28 @@ The BrowserAutomation class now includes comprehensive browser interaction capab
 ### Element Waiting
 - `wait_for_element(selector, state='visible', timeout=10000)` - Wait for element states
 - States: 'visible', 'hidden', 'attached', 'detached'
+
+## Fixed Task Automation
+
+The project now includes complete fixed task automation capabilities:
+
+### Basic Fixed Task
+- **Task**: Navigate to a website, search for a product, and report results
+- **Features**: Form interaction, search functionality, result extraction
+- **Error Handling**: Graceful handling of missing elements and network issues
+
+### E-commerce Task
+- **Task**: Navigate to an e-commerce site, search for products, extract prices
+- **Features**: Product search, price extraction, result analysis
+- **Real-world Testing**: Works with actual e-commerce websites
+
+### Task Results
+Both automation types provide comprehensive results:
+- Navigation success/failure status
+- Search results with product information
+- Price extraction and analysis
+- Error messages and edge case handling
+- Execution time and performance metrics
 
 ## Next Steps
 
