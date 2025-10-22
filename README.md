@@ -5,6 +5,10 @@ A Python program that can automatically perform tasks on websites using Playwrig
 ## Features
 
 - **Basic Browser Automation**: Control web browsers using Playwright
+- **Core Browser Actions**: Click, type, navigate, and interact with web elements
+- **Element Interaction**: Get text, attributes, and handle multiple elements
+- **Page Navigation**: Back, forward, refresh, and scroll functionality
+- **Element Waiting**: Wait for elements to be visible, clickable, or in specific states
 - **Error Handling**: Robust error handling for reliable automation
 - **Async Support**: Built with async/await for better performance
 - **Context Management**: Proper resource cleanup with context managers
@@ -95,6 +99,24 @@ async def my_automation():
         # Get page title
         title = await automation.get_page_title()
         print(f"Page title: {title}")
+        
+        # Click on elements
+        await automation.click_element("a")
+        
+        # Type text into forms
+        await automation.type_text("input[name='search']", "search query")
+        
+        # Navigate pages
+        await automation.page_back()
+        await automation.page_forward()
+        await automation.page_refresh()
+        
+        # Wait for elements
+        await automation.wait_for_element("h1", state='visible')
+        
+        # Get element information
+        text = await automation.get_element_text("h1")
+        attribute = await automation.get_element_attribute("a", "href")
 
 # Run the automation
 asyncio.run(my_automation())
@@ -164,6 +186,33 @@ The `BrowserAutomation` class is designed to be extensible. You can add new meth
 ### Getting Help
 
 Check the logs for detailed error messages. The application provides comprehensive logging to help identify issues.
+
+## Core Browser Actions
+
+The BrowserAutomation class now includes comprehensive browser interaction capabilities:
+
+### Click Actions
+- `click_element(selector, timeout=10000)` - Click buttons, links, and other elements
+- Supports CSS selectors, XPath, and text content
+
+### Text Input
+- `type_text(selector, text, clear_first=True, timeout=10000)` - Type into form fields
+- `clear_first` option to clear existing text before typing
+
+### Page Navigation
+- `page_back()` - Navigate to previous page
+- `page_forward()` - Navigate to next page  
+- `page_refresh()` - Refresh current page
+
+### Element Interaction
+- `get_element_text(selector, timeout=10000)` - Get text content
+- `get_element_attribute(selector, attribute, timeout=10000)` - Get attribute values
+- `get_all_elements(selector, timeout=10000)` - Get multiple elements
+- `scroll_to_element(selector, timeout=10000)` - Scroll to make element visible
+
+### Element Waiting
+- `wait_for_element(selector, state='visible', timeout=10000)` - Wait for element states
+- States: 'visible', 'hidden', 'attached', 'detached'
 
 ## Next Steps
 
