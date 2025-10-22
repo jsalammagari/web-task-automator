@@ -11,6 +11,8 @@ A Python program that can automatically perform tasks on websites using Playwrig
 - **Reliability & Error Handling**: Comprehensive error handling and retry mechanisms
 - **MCP Server Integration**: AI context integration with Playwright MCP Server
 - **AI Language Model Integration**: LLM-powered dynamic task planning
+- **Dynamic Task Execution Engine**: AI-driven adaptive task execution
+- **Natural Language Goal Processing**: Process user goals in plain English
 - **Element Interaction**: Get text, attributes, and handle multiple elements
 - **Page Navigation**: Back, forward, refresh, and scroll functionality
 - **Element Waiting**: Wait for elements to be visible, clickable, or in specific states
@@ -188,6 +190,8 @@ web-task-automator/
 ├── reliable_browser_automation.py  # Enhanced reliability automation
 ├── mcp_server_integration.py       # MCP Server integration for AI context
 ├── ai_task_planner.py              # AI Language Model integration for task planning
+├── dynamic_execution_engine.py      # Dynamic task execution engine
+├── natural_language_processor.py    # Natural language goal processing
 ├── fixed_task_automation.py        # Fixed task automation
 ├── ecommerce_task_automation.py    # E-commerce task automation
 ├── requirements.txt                # Python dependencies
@@ -393,6 +397,111 @@ results = await executor.execute_task_plan(task_plan)
 - **Step Validation**: Validate generated automation steps
 - **Error Recovery**: AI suggestions for failed operations
 - **Confidence Scoring**: Estimate task success probability
+
+## Dynamic Task Execution Engine
+
+The project includes an AI-driven dynamic task execution system:
+
+### Execution Engine Features
+- **Plan Parser**: Parse AI-generated JSON commands with validation
+- **Command Executor**: Translate AI commands to browser actions
+- **Command Validation**: Validate AI-generated commands before execution
+- **Feedback Loop**: Dynamic plan adjustment based on execution results
+- **Monitoring & Logging**: Comprehensive AI decision-making monitoring
+- **Adaptive Execution**: Real-time plan adaptation for better success rates
+
+### Core Components
+- **CommandValidator**: Validates AI commands for correctness
+- **PlanParser**: Parses and structures AI-generated plans
+- **CommandExecutor**: Executes commands on browser automation
+- **FeedbackLoop**: Analyzes results and suggests improvements
+- **ExecutionMonitor**: Tracks AI decisions and performance
+- **DynamicExecutionEngine**: Main orchestration engine
+
+### Usage Example
+```python
+from dynamic_execution_engine import DynamicExecutionEngine
+
+# Initialize execution engine
+engine = DynamicExecutionEngine(automation_client, ai_task_planner)
+
+# Execute AI plan with dynamic adaptation
+plan_data = {
+    "goal": "Fill out contact form",
+    "steps": [
+        {"action": "navigate", "url": "https://example.com/contact"},
+        {"action": "type", "selector": "input[name='name']", "text": "John Doe"},
+        {"action": "click", "selector": "button[type='submit']"}
+    ]
+}
+
+# Execute with adaptation
+result = await engine.execute_with_adaptation(plan_data, context)
+print(f"Execution success: {result.success}")
+print(f"Success rate: {result.metrics.success_rate:.2%}")
+
+# Get execution summary
+summary = engine.get_execution_summary()
+print(f"Total executions: {summary['total_executions']}")
+```
+
+### Execution Features
+- **Command Validation**: Pre-execution validation of AI commands
+- **Retry Logic**: Automatic retry for failed commands
+- **Performance Tracking**: Execution time and success rate monitoring
+- **Feedback Analysis**: AI-powered execution result analysis
+- **Plan Adaptation**: Dynamic plan improvement based on feedback
+- **Comprehensive Logging**: Detailed execution and decision logs
+
+## Natural Language Goal Processing
+
+The project includes comprehensive natural language processing for user goals:
+
+### NLP Features
+- **Intent Recognition**: Automatically identify user intent (shopping, form filling, data extraction, etc.)
+- **Entity Extraction**: Extract products, colors, prices, websites, and other entities from goals
+- **Complexity Detection**: Classify goals as simple, moderate, complex, or ambiguous
+- **Context Extraction**: Extract requirements, constraints, and preferences from goals
+- **Goal Translation**: Convert natural language goals to structured automation plans
+- **Ambiguous Goal Handling**: Provide suggestions for unclear or ambiguous goals
+
+### Supported Intents
+- **Shopping**: Buy products, compare prices, add to cart
+- **Form Filling**: Complete forms, enter information
+- **Data Extraction**: Extract text, prices, information from pages
+- **Navigation**: Go to websites, click links, browse pages
+- **Search**: Search for products, information, content
+- **Click Actions**: Click buttons, links, menu items
+
+### Usage Example
+```python
+from natural_language_processor import NaturalLanguageGoalProcessor
+
+# Initialize processor
+processor = NaturalLanguageGoalProcessor(ai_task_planner)
+
+# Process user goal
+goal = "Buy the cheapest blue shirt on Amazon under $30"
+webpage_context = {
+    "page": {"title": "Amazon", "url": "https://amazon.com"},
+    "elements": [{"tag": "input", "selector": "input[name='search']"}]
+}
+
+# Get automation plan
+plan = await processor.process_user_goal(goal, webpage_context)
+print(f"Generated plan with {len(plan['steps'])} steps")
+print(f"Intent: {plan['intent']}")
+print(f"Confidence: {plan['processing_info']['confidence']}")
+```
+
+### Goal Processing Features
+- **Natural Language Input**: Describe goals in plain English
+- **Intent Classification**: Automatic intent recognition with confidence scoring
+- **Entity Recognition**: Extract products, colors, sizes, prices, websites
+- **Complexity Analysis**: Determine goal complexity and processing requirements
+- **Context Understanding**: Extract requirements, constraints, and preferences
+- **Plan Generation**: Convert goals to structured automation plans
+- **Suggestion System**: Provide feedback for ambiguous or unclear goals
 
 ## Reliability and Error Handling
 
