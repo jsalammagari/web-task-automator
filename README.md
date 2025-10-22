@@ -9,6 +9,7 @@ A Python program that can automatically perform tasks on websites using Playwrig
 - **Fixed Task Automation**: Complete automated workflows for specific tasks
 - **E-commerce Automation**: Real-world shopping and product search automation
 - **Reliability & Error Handling**: Comprehensive error handling and retry mechanisms
+- **MCP Server Integration**: AI context integration with Playwright MCP Server
 - **Element Interaction**: Get text, attributes, and handle multiple elements
 - **Page Navigation**: Back, forward, refresh, and scroll functionality
 - **Element Waiting**: Wait for elements to be visible, clickable, or in specific states
@@ -17,6 +18,8 @@ A Python program that can automatically perform tasks on websites using Playwrig
 - **Exception Handling**: Custom exceptions for different error types
 - **Enhanced Logging**: Detailed logging for debugging and monitoring
 - **Performance Tracking**: Operation timing and performance metrics
+- **Accessibility Data**: Extract accessibility tree and element roles
+- **AI Context**: Generate AI-friendly webpage context data
 - **Edge Case Handling**: Handle slow loading, missing elements, and network issues
 - **Async Support**: Built with async/await for better performance
 - **Context Management**: Proper resource cleanup with context managers
@@ -182,6 +185,7 @@ asyncio.run(run_ecommerce_task())
 web-task-automator/
 ├── browser_automation.py           # Main automation module
 ├── reliable_browser_automation.py  # Enhanced reliability automation
+├── mcp_server_integration.py       # MCP Server integration for AI context
 ├── fixed_task_automation.py        # Fixed task automation
 ├── ecommerce_task_automation.py    # E-commerce task automation
 ├── requirements.txt                # Python dependencies
@@ -195,6 +199,8 @@ web-task-automator/
 
 - **playwright**: Browser automation library
 - **asyncio**: Asynchronous programming support
+- **aiohttp**: HTTP client for MCP Server communication
+- **requests**: HTTP library for server setup
 - **typing-extensions**: Type hints support
 
 ## Error Handling
@@ -293,6 +299,45 @@ Both automation types provide comprehensive results:
 - Price extraction and analysis
 - Error messages and edge case handling
 - Execution time and performance metrics
+
+## MCP Server Integration
+
+The project includes integration with Playwright MCP Server for AI context:
+
+### AI Context Features
+- **Webpage Context**: Extract comprehensive webpage information for AI processing
+- **Accessibility Data**: Capture accessibility tree and element roles
+- **Element Structure**: Detailed element information including roles, states, and properties
+- **AI-Friendly Format**: Structured data optimized for AI consumption
+
+### MCP Server Components
+- **MCPServerManager**: Handles server lifecycle and connection management
+- **MCPBrowserAutomation**: Enhanced browser automation with AI context
+- **Data Exchange**: Bidirectional communication with MCP Server
+- **Context Capture**: Real-time webpage context extraction
+
+### Usage Example
+```python
+from mcp_server_integration import MCPServerManager, MCPBrowserAutomation
+
+async def ai_automation():
+    mcp_manager = MCPServerManager()
+    automation = MCPBrowserAutomation(mcp_manager)
+    
+    # Start server and session
+    await mcp_manager.start_server()
+    await automation.start_session()
+    
+    # Navigate and capture context
+    await automation.navigate_to("https://example.com")
+    context = await automation.get_ai_context()
+    
+    # AI can now use context for intelligent decisions
+    print(f"Page has {context['summary']['total_elements']} elements")
+    
+    await automation.close_session()
+    await mcp_manager.stop_server()
+```
 
 ## Reliability and Error Handling
 
