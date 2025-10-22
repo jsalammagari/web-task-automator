@@ -10,6 +10,7 @@ A Python program that can automatically perform tasks on websites using Playwrig
 - **E-commerce Automation**: Real-world shopping and product search automation
 - **Reliability & Error Handling**: Comprehensive error handling and retry mechanisms
 - **MCP Server Integration**: AI context integration with Playwright MCP Server
+- **AI Language Model Integration**: LLM-powered dynamic task planning
 - **Element Interaction**: Get text, attributes, and handle multiple elements
 - **Page Navigation**: Back, forward, refresh, and scroll functionality
 - **Element Waiting**: Wait for elements to be visible, clickable, or in specific states
@@ -186,6 +187,7 @@ web-task-automator/
 ├── browser_automation.py           # Main automation module
 ├── reliable_browser_automation.py  # Enhanced reliability automation
 ├── mcp_server_integration.py       # MCP Server integration for AI context
+├── ai_task_planner.py              # AI Language Model integration for task planning
 ├── fixed_task_automation.py        # Fixed task automation
 ├── ecommerce_task_automation.py    # E-commerce task automation
 ├── requirements.txt                # Python dependencies
@@ -201,6 +203,8 @@ web-task-automator/
 - **asyncio**: Asynchronous programming support
 - **aiohttp**: HTTP client for MCP Server communication
 - **requests**: HTTP library for server setup
+- **openai**: OpenAI API client for GPT models
+- **anthropic**: Anthropic API client for Claude models
 - **typing-extensions**: Type hints support
 
 ## Error Handling
@@ -338,6 +342,57 @@ async def ai_automation():
     await automation.close_session()
     await mcp_manager.stop_server()
 ```
+
+## AI Language Model Integration
+
+The project includes AI-powered task planning using Language Models:
+
+### LLM Features
+- **Multi-Provider Support**: OpenAI GPT, Anthropic Claude, and local models
+- **Dynamic Task Planning**: Convert natural language goals to automation steps
+- **Context-Aware Planning**: Use webpage context for intelligent task generation
+- **Error Recovery**: AI-powered recovery suggestions for failed tasks
+- **Structured Output**: JSON command generation with validation
+
+### Supported LLM Providers
+- **OpenAI**: GPT-4, GPT-3.5-turbo
+- **Anthropic**: Claude-3-sonnet, Claude-3-haiku
+- **Local Models**: Ollama, local LLM servers
+
+### Usage Example
+```python
+from ai_task_planner import LLMClient, LLMProvider, AITaskPlanner
+
+# Initialize LLM client
+llm_client = LLMClient(LLMProvider.OPENAI, api_key="your-api-key")
+
+# Create task planner
+task_planner = AITaskPlanner(llm_client)
+
+# Create task plan from natural language
+goal = "Fill out the contact form and submit it"
+context = {
+    "page": {"title": "Contact Form", "url": "https://example.com/contact"},
+    "elements": [
+        {"tag": "input", "selector": "input[name='email']", "role": "textbox"},
+        {"tag": "button", "selector": "button[type='submit']", "role": "button"}
+    ]
+}
+
+task_plan = await task_planner.create_task_plan(goal, context)
+print(f"Created plan with {len(task_plan.steps)} steps")
+
+# Execute the plan
+executor = AITaskExecutor(task_planner, automation_client)
+results = await executor.execute_task_plan(task_plan)
+```
+
+### Task Planning Features
+- **Natural Language Input**: Describe goals in plain English
+- **Context Integration**: Use webpage structure for better planning
+- **Step Validation**: Validate generated automation steps
+- **Error Recovery**: AI suggestions for failed operations
+- **Confidence Scoring**: Estimate task success probability
 
 ## Reliability and Error Handling
 
