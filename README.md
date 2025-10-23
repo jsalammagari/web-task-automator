@@ -13,6 +13,7 @@ A Python program that can automatically perform tasks on websites using Playwrig
 - **AI Language Model Integration**: LLM-powered dynamic task planning
 - **Dynamic Task Execution Engine**: AI-driven adaptive task execution
 - **Natural Language Goal Processing**: Process user goals in plain English
+- **Web API Foundation**: RESTful API for remote automation control
 - **Element Interaction**: Get text, attributes, and handle multiple elements
 - **Page Navigation**: Back, forward, refresh, and scroll functionality
 - **Element Waiting**: Wait for elements to be visible, clickable, or in specific states
@@ -192,6 +193,8 @@ web-task-automator/
 ├── ai_task_planner.py              # AI Language Model integration for task planning
 ├── dynamic_execution_engine.py      # Dynamic task execution engine
 ├── natural_language_processor.py    # Natural language goal processing
+├── web_api.py                       # FastAPI web API server
+├── start_api.py                     # API server startup script
 ├── fixed_task_automation.py        # Fixed task automation
 ├── ecommerce_task_automation.py    # E-commerce task automation
 ├── requirements.txt                # Python dependencies
@@ -502,6 +505,74 @@ print(f"Confidence: {plan['processing_info']['confidence']}")
 - **Context Understanding**: Extract requirements, constraints, and preferences
 - **Plan Generation**: Convert goals to structured automation plans
 - **Suggestion System**: Provide feedback for ambiguous or unclear goals
+
+## Web API Foundation
+
+The project includes a comprehensive FastAPI-based web API for remote automation control:
+
+### API Features
+- **RESTful Endpoints**: Complete REST API for automation control
+- **Task Management**: Create, monitor, and cancel automation tasks
+- **AI-Powered Automation**: Natural language goal processing via API
+- **Basic Automation**: Direct browser action execution
+- **Real-time Status**: Task progress monitoring and status updates
+- **API Documentation**: Auto-generated OpenAPI/Swagger documentation
+- **Security**: API key authentication and CORS support
+
+### API Endpoints
+- **GET /health** - Health check and service status
+- **POST /tasks** - Create new automation tasks
+- **GET /tasks/{task_id}** - Get task status and results
+- **GET /tasks** - List all tasks
+- **DELETE /tasks/{task_id}** - Cancel running tasks
+- **POST /automation/basic** - Execute basic automation
+- **POST /automation/ai-powered** - AI-powered automation
+- **GET /automation/capabilities** - Get available features
+- **POST /automation/validate** - Validate automation requests
+
+### Usage Example
+```bash
+# Start the API server
+python start_api.py
+
+# Create a task
+curl -X POST "http://localhost:8000/tasks" \
+  -H "Authorization: Bearer demo-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "goal": "Buy the cheapest blue shirt on Amazon",
+    "url": "https://amazon.com",
+    "headless": true
+  }'
+
+# Check task status
+curl -X GET "http://localhost:8000/tasks/task_123" \
+  -H "Authorization: Bearer demo-api-key"
+
+# Execute basic automation
+curl -X POST "http://localhost:8000/automation/basic" \
+  -H "Authorization: Bearer demo-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com",
+    "actions": [
+      {"type": "click", "selector": "button"},
+      {"type": "type", "selector": "input", "text": "test"}
+    ]
+  }'
+```
+
+### API Documentation
+- **Swagger UI**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+- **OpenAPI Schema**: http://localhost:8000/openapi.json
+
+### Security Features
+- **API Key Authentication**: Bearer token authentication
+- **CORS Support**: Configurable cross-origin resource sharing
+- **Request Validation**: Pydantic model validation
+- **Error Handling**: Comprehensive error responses
+- **Rate Limiting**: Built-in request throttling (configurable)
 
 ## Reliability and Error Handling
 
