@@ -14,6 +14,7 @@ A Python program that can automatically perform tasks on websites using Playwrig
 - **Dynamic Task Execution Engine**: AI-driven adaptive task execution
 - **Natural Language Goal Processing**: Process user goals in plain English
 - **Web API Foundation**: RESTful API for remote automation control
+- **Remote Task Execution**: Advanced task queuing and remote execution
 - **Element Interaction**: Get text, attributes, and handle multiple elements
 - **Page Navigation**: Back, forward, refresh, and scroll functionality
 - **Element Waiting**: Wait for elements to be visible, clickable, or in specific states
@@ -194,6 +195,7 @@ web-task-automator/
 ├── dynamic_execution_engine.py      # Dynamic task execution engine
 ├── natural_language_processor.py    # Natural language goal processing
 ├── web_api.py                       # FastAPI web API server
+├── remote_execution_api.py          # Remote task execution API
 ├── start_api.py                     # API server startup script
 ├── fixed_task_automation.py        # Fixed task automation
 ├── ecommerce_task_automation.py    # E-commerce task automation
@@ -573,6 +575,84 @@ curl -X POST "http://localhost:8000/automation/basic" \
 - **Request Validation**: Pydantic model validation
 - **Error Handling**: Comprehensive error responses
 - **Rate Limiting**: Built-in request throttling (configurable)
+
+## Remote Task Execution
+
+The project includes an advanced remote task execution system with queuing and status tracking:
+
+### Remote Execution Features
+- **Task Queuing**: Priority-based task queue with worker threads
+- **Status Tracking**: Real-time task progress and status monitoring
+- **Result Delivery**: Automatic result delivery with callback support
+- **Batch Processing**: Submit multiple tasks simultaneously
+- **Priority Handling**: Task priority levels (low, normal, high, urgent)
+- **Timeout Management**: Configurable task timeouts and cancellation
+- **Error Handling**: Comprehensive error handling and recovery
+
+### Enhanced API Endpoints
+- **POST /tasks/submit** - Submit new task for remote execution
+- **GET /tasks/{task_id}/status** - Get detailed task status
+- **GET /tasks/{task_id}/result** - Get task execution results
+- **DELETE /tasks/{task_id}** - Cancel running task
+- **GET /queue/status** - Get queue status and statistics
+- **POST /tasks/batch** - Submit multiple tasks at once
+- **POST /tasks/validate** - Validate task request before submission
+
+### Usage Example
+```bash
+# Start the remote execution API server
+python remote_execution_api.py
+
+# Submit a high-priority task
+curl -X POST "http://localhost:8001/tasks/submit" \
+  -H "Authorization: Bearer demo-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "task_description": "Buy the cheapest blue shirt on Amazon",
+    "target_url": "https://amazon.com",
+    "priority": "high",
+    "timeout_seconds": 300,
+    "callback_url": "https://your-app.com/webhook"
+  }'
+
+# Check task status
+curl -X GET "http://localhost:8001/tasks/task_abc123/status" \
+  -H "Authorization: Bearer demo-api-key"
+
+# Get task results
+curl -X GET "http://localhost:8001/tasks/task_abc123/result" \
+  -H "Authorization: Bearer demo-api-key"
+
+# Submit batch tasks
+curl -X POST "http://localhost:8001/tasks/batch" \
+  -H "Authorization: Bearer demo-api-key" \
+  -H "Content-Type: application/json" \
+  -d '[
+    {
+      "task_description": "First task",
+      "priority": "normal"
+    },
+    {
+      "task_description": "Second task", 
+      "priority": "high"
+    }
+  ]'
+```
+
+### Task Queue Management
+- **Priority Queue**: Tasks executed based on priority level
+- **Worker Threads**: Configurable number of concurrent workers
+- **Queue Status**: Real-time queue statistics and monitoring
+- **Task Cancellation**: Cancel running or queued tasks
+- **Result Storage**: Persistent storage of task results
+- **Callback Notifications**: Automatic result delivery via webhooks
+
+### Advanced Features
+- **Task Validation**: Pre-submission validation of task requests
+- **Error Recovery**: Automatic retry and error handling
+- **Performance Monitoring**: Task execution metrics and statistics
+- **Resource Management**: Efficient resource usage and cleanup
+- **Scalability**: Horizontal scaling with multiple worker threads
 
 ## Reliability and Error Handling
 
