@@ -591,13 +591,13 @@ class ExecutionMonitor:
 class DynamicExecutionEngine:
     """Main dynamic task execution engine."""
     
-    def __init__(self, automation_client, ai_task_planner):
+    def __init__(self, automation_client=None, ai_task_planner=None):
         """
         Initialize dynamic execution engine.
         
         Args:
-            automation_client: Browser automation client
-            ai_task_planner: AI task planner instance
+            automation_client: Browser automation client (optional)
+            ai_task_planner: AI task planner instance (optional)
         """
         self.automation_client = automation_client
         self.ai_task_planner = ai_task_planner

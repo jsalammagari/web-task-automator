@@ -18,8 +18,11 @@ from dataclasses import dataclass, asdict
 from typing import Dict, List, Optional, Any, Union, Tuple
 from enum import Enum
 import aiohttp
-import openai
-from anthropic import Anthropic
+from groq import Groq
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -35,9 +38,7 @@ logger = logging.getLogger(__name__)
 
 class LLMProvider(Enum):
     """Supported LLM providers."""
-    OPENAI = "openai"
-    ANTHROPIC = "anthropic"
-    LOCAL = "local"
+    GROQ = "groq"
 
 
 class TaskStatus(Enum):
@@ -237,29 +238,17 @@ class LLMClient:
     def _get_default_model(self) -> str:
         """Get default model for provider."""
         defaults = {
-            LLMProvider.OPENAI: "gpt-4",
-            LLMProvider.ANTHROPIC: "claude-3-sonnet-20240229",
-            LLMProvider.LOCAL: "llama-2-7b"
+            LLMProvider.GROQ: "llama-3.3-70b-versatile"
         }
-        return defaults.get(self.provider, "gpt-4")
+        return defaults.get(self.provider, "llama-3.3-70b-versatile")
     
     def _initialize_client(self) -> None:
         """Initialize the LLM client."""
         try:
-            if self.provider == LLMProvider.OPENAI:
+            if self.provider == LLMProvider.GROQ:
                 if not self.api_key:
-                    raise ValueError("OpenAI API key required")
-                openai.api_key = self.api_key
-                self.client = openai.AsyncOpenAI(api_key=self.api_key)
-                
-            elif self.provider == LLMProvider.ANTHROPIC:
-                if not self.api_key:
-                    raise ValueError("Anthropic API key required")
-                self.client = Anthropic(api_key=self.api_key)
-                
-            elif self.provider == LLMProvider.LOCAL:
-                # For local models, we'll use a mock client
-                self.client = LocalLLMClient()
+                    raise ValueError("Groq API key required")
+                self.client = Groq(api_key=self.api_key)
                 
             logger.info(f"✅ LLM client initialized: {self.provider.value} - {self.model}")
             
@@ -279,8 +268,8 @@ class LLMClient:
             str: LLM response
         """
         try:
-            if self.provider == LLMProvider.OPENAI:
-                response = await self.client.chat.completions.create(
+            if self.provider == LLMProvider.GROQ:
+                response = self.client.chat.completions.create(
                     model=self.model,
                     messages=[{"role": "user", "content": prompt}],
                     max_tokens=max_tokens,
@@ -288,43 +277,11 @@ class LLMClient:
                 )
                 return response.choices[0].message.content
                 
-            elif self.provider == LLMProvider.ANTHROPIC:
-                response = self.client.messages.create(
-                    model=self.model,
-                    max_tokens=max_tokens,
-                    temperature=0.1,
-                    messages=[{"role": "user", "content": prompt}]
-                )
-                return response.content[0].text
-                
-            elif self.provider == LLMProvider.LOCAL:
-                return await self.client.generate_response(prompt, max_tokens)
-                
         except Exception as e:
             logger.error(f"❌ LLM generation failed: {str(e)}")
             raise
 
 
-class LocalLLMClient:
-    """Mock client for local LLM models."""
-    
-    async def generate_response(self, prompt: str, max_tokens: int) -> str:
-        """Generate mock response for local models."""
-        # This is a mock implementation
-        # In a real implementation, you would integrate with local models like Ollama, etc.
-        return json.dumps({
-            "goal": "Mock task",
-            "steps": [
-                {
-                    "step_id": 1,
-                    "action": "navigate",
-                    "url": "https://example.com",
-                    "description": "Mock navigation step"
-                }
-            ],
-            "estimated_duration": 10.0,
-            "confidence_score": 0.8
-        })
 
 
 class AITaskPlanner:
@@ -703,8 +660,8 @@ class AITaskExecutor:
 async def main():
     """Demo function for AI Task Planner."""
     try:
-        # Initialize LLM client (using OpenAI as example)
-        llm_client = LLMClient(LLMProvider.OPENAI)
+        # Initialize LLM client with Groq
+        llm_client = LLMClient(LLMProvider.GROQ, api_key=os.getenv("GROQ_API_KEY"))
         
         # Initialize task planner
         task_planner = AITaskPlanner(llm_client)

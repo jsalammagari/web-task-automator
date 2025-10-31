@@ -676,10 +676,245 @@ The project now includes comprehensive reliability features:
 - **Resource Cleanup**: Proper cleanup of browser resources
 - **Error Recovery**: Automatic recovery from common errors
 
-## Next Steps
+## Deployment Options
 
-This is the foundation for more advanced features:
-- AI-driven task planning
-- Web API endpoints
-- Advanced browser interactions
-- Task scheduling and monitoring
+### Docker Deployment (Recommended)
+
+#### Quick Start with Docker
+```bash
+# 1. Clone the repository
+git clone <repository-url>
+cd web-task-automator
+
+# 2. Set up environment variables
+cp env.template .env
+# Edit .env with your GROQ_API_KEY
+
+# 3. Run with Docker Compose
+docker-compose up -d
+
+# 4. Check status
+docker-compose ps
+```
+
+#### Production Deployment
+```bash
+# Run with production profile (includes Nginx)
+docker-compose --profile production up -d
+```
+
+### Manual Deployment
+
+#### System Requirements
+- Python 3.8+
+- 2GB RAM minimum
+- 1GB disk space
+- Internet connection for API calls
+
+#### Production Setup
+```bash
+# 1. Install system dependencies
+sudo apt-get update
+sudo apt-get install -y python3-pip python3-venv
+
+# 2. Create application user
+sudo useradd -m -s /bin/bash automator
+sudo usermod -aG sudo automator
+
+# 3. Set up application directory
+sudo mkdir -p /opt/web-task-automator
+sudo chown automator:automator /opt/web-task-automator
+
+# 4. Deploy application
+cd /opt/web-task-automator
+git clone <repository-url> .
+sudo chown -R automator:automator .
+
+# 5. Set up virtual environment
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+playwright install chromium
+
+# 6. Configure environment
+cp env.template .env
+# Edit .env with production values
+
+# 7. Set up systemd service
+sudo cp web-task-automator.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable web-task-automator
+sudo systemctl start web-task-automator
+```
+
+## Troubleshooting Guide
+
+### Common Issues and Solutions
+
+#### 1. Browser Installation Issues
+
+**Problem:** `playwright install` fails
+```bash
+# Solution: Install system dependencies first
+sudo apt-get update
+sudo apt-get install -y libnss3 libatk-bridge2.0-0 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2
+playwright install chromium
+```
+
+**Problem:** Browser crashes or won't start
+```bash
+# Solution: Run in headless mode with additional flags
+export PLAYWRIGHT_BROWSERS_PATH=/usr/bin
+playwright install chromium --with-deps
+```
+
+#### 2. API Key Issues
+
+**Problem:** `GROQ_API_KEY not set` error
+```bash
+# Solution: Check environment variables
+echo $GROQ_API_KEY
+# If empty, set it:
+export GROQ_API_KEY="your-actual-api-key"
+# Or add to .env file:
+echo "GROQ_API_KEY=your-actual-api-key" >> .env
+```
+
+**Problem:** API rate limiting
+```bash
+# Solution: Add delays between requests
+export GROQ_RATE_LIMIT_DELAY=1.0
+```
+
+#### 3. Memory and Performance Issues
+
+**Problem:** Out of memory errors
+```bash
+# Solution: Increase memory limits
+export PLAYWRIGHT_BROWSER_MEMORY_LIMIT=512
+# Or run with fewer concurrent tasks
+export MAX_CONCURRENT_TASKS=2
+```
+
+**Problem:** Slow performance
+```bash
+# Solution: Optimize browser settings
+export PLAYWRIGHT_HEADLESS=true
+export PLAYWRIGHT_SLOW_MO=0
+```
+
+#### 4. Network and Connectivity Issues
+
+**Problem:** Timeout errors
+```bash
+# Solution: Increase timeout values
+export DEFAULT_TIMEOUT=30000
+export NETWORK_TIMEOUT=60000
+```
+
+**Problem:** SSL certificate errors
+```bash
+# Solution: Disable SSL verification (not recommended for production)
+export PLAYWRIGHT_IGNORE_HTTPS_ERRORS=true
+```
+
+#### 5. Docker-Specific Issues
+
+**Problem:** Docker container won't start
+```bash
+# Solution: Check logs
+docker-compose logs web-task-automator
+
+# Check if ports are available
+netstat -tulpn | grep :8000
+```
+
+**Problem:** Permission denied in Docker
+```bash
+# Solution: Fix file permissions
+sudo chown -R 1000:1000 .
+docker-compose down
+docker-compose up -d
+```
+
+#### 6. API Endpoint Issues
+
+**Problem:** 404 errors on API endpoints
+```bash
+# Solution: Check if API is running
+curl http://localhost:8000/health
+
+# Check API documentation
+curl http://localhost:8000/docs
+```
+
+**Problem:** CORS errors
+```bash
+# Solution: Configure CORS in web_api.py
+# Add your domain to allowed origins
+```
+
+### Debugging Commands
+
+#### Check System Status
+```bash
+# Check if all services are running
+docker-compose ps
+
+# Check logs
+docker-compose logs -f web-task-automator
+
+# Check API health
+curl -X GET http://localhost:8000/health
+```
+
+#### Test Individual Components
+```bash
+# Test browser automation
+python -c "from browser_automation import BrowserAutomation; print('Browser automation OK')"
+
+# Test AI integration
+python -c "from ai_task_planner import LLMClient, LLMProvider; print('AI integration OK')"
+
+# Test API endpoints
+python -c "from web_api import app; print('API OK')"
+```
+
+#### Performance Monitoring
+```bash
+# Monitor resource usage
+docker stats
+
+# Check disk usage
+df -h
+
+# Monitor logs
+tail -f logs/*.log
+```
+
+### Getting Help
+
+1. **Check the logs** in the `logs/` directory
+2. **Verify environment variables** are set correctly
+3. **Test individual components** using the debugging commands above
+4. **Check system resources** (memory, disk space, network)
+5. **Review the API documentation** at `http://localhost:8000/docs`
+
+### Support
+
+For additional help:
+- Check the [Issues](https://github.com/your-repo/issues) page
+- Review the [API Documentation](http://localhost:8000/docs)
+- Contact the development team
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

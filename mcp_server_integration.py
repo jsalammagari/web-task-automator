@@ -195,15 +195,15 @@ class MCPBrowserAutomation:
     accessibility data, and AI-friendly data structures.
     """
     
-    def __init__(self, mcp_manager: MCPServerManager, headless: bool = True):
+    def __init__(self, mcp_manager: Optional[MCPServerManager] = None, headless: bool = True):
         """
         Initialize MCP Browser Automation.
         
         Args:
-            mcp_manager (MCPServerManager): MCP Server manager instance
+            mcp_manager (MCPServerManager, optional): MCP Server manager instance. If None, creates a default one.
             headless (bool): Whether to run browser in headless mode
         """
-        self.mcp_manager = mcp_manager
+        self.mcp_manager = mcp_manager or MCPServerManager()
         self.headless = headless
         self.session: Optional[aiohttp.ClientSession] = None
         self.current_page_context: Optional[PageContext] = None

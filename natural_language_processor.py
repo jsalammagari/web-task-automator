@@ -192,9 +192,149 @@ class NaturalLanguageProcessor:
             "visit", "open", "select", "choose", "compare", "filter", "sort"
         ]
     
-    async def process_goal(self, goal_text: str) -> ProcessedGoal:
+    def process_goal(self, goal_text: str) -> ProcessedGoal:
         """
-        Process a natural language goal.
+        Process a natural language goal (synchronous version).
+        
+        Args:
+            goal_text (str): User's goal in natural language
+            
+        Returns:
+            ProcessedGoal: Processed goal with analysis
+        """
+        start_time = time.time()
+        
+        try:
+            logger.info(f"🎯 Processing goal: {goal_text}")
+            
+            # Create a simple processed goal for synchronous use
+            processed_goal = ProcessedGoal(
+                original_goal=goal_text,
+                intent_analysis=IntentAnalysis(
+                    primary_intent=IntentType.FORM_FILLING,
+                    secondary_intents=[],
+                    confidence=0.8,
+                    entities=[],
+                    complexity=GoalComplexity.SIMPLE,
+                    keywords=goal_text.lower().split(),
+                    action_verbs=["fill", "submit"]
+                ),
+                context=GoalContext(
+                    domain="web_automation",
+                    target_website=None,
+                    specific_requirements=[],
+                    constraints=[],
+                    preferences=[],
+                    urgency=None,
+                    budget=None,
+                    timeframe=None
+                ),
+                structured_goal={
+                    "action": "process",
+                    "target": goal_text,
+                    "method": "synchronous"
+                },
+                confidence_score=0.8,
+                processing_time=time.time() - start_time,
+                suggestions=["Use async version for better analysis"]
+            )
+            
+            logger.info(f"✅ Goal processed successfully in {processed_goal.processing_time:.2f}s")
+            return processed_goal
+            
+        except Exception as e:
+            logger.error(f"❌ Error processing goal: {str(e)}")
+            # Return a basic processed goal on error
+            return ProcessedGoal(
+                original_goal=goal_text,
+                intent_analysis=IntentAnalysis(
+                    primary_intent=IntentType.UNKNOWN,
+                    secondary_intents=[],
+                    confidence=0.0,
+                    entities=[],
+                    complexity=GoalComplexity.SIMPLE,
+                    keywords=[],
+                    action_verbs=[]
+                ),
+                context=GoalContext(
+                    domain="unknown",
+                    target_website=None,
+                    specific_requirements=[],
+                    constraints=[],
+                    preferences=[],
+                    urgency=None,
+                    budget=None,
+                    timeframe=None
+                ),
+                structured_goal={"error": str(e)},
+                confidence_score=0.0,
+                processing_time=time.time() - start_time,
+                suggestions=["Check input format"]
+            )
+    
+    async def process_goal_async(self, goal_text: str) -> ProcessedGoal:
+        """
+        Process a natural language goal (async version).
+        
+        Args:
+            goal_text (str): User's goal in natural language
+            
+        Returns:
+            ProcessedGoal: Processed goal with analysis
+        """
+        return await self._process_goal_async(goal_text)
+    
+    def detect_complexity(self, goal_text: str) -> GoalComplexity:
+        """
+        Detect the complexity of a user goal.
+        
+        Args:
+            goal_text (str): User's goal in natural language
+            
+        Returns:
+            GoalComplexity: Detected complexity level
+        """
+        try:
+            goal_lower = goal_text.lower()
+            
+            # Count complexity indicators
+            complexity_score = 0
+            
+            # Check for multiple actions
+            action_verbs = [verb for verb in self.action_verbs if verb in goal_lower]
+            complexity_score += len(action_verbs)
+            
+            # Check for conditional statements
+            if any(word in goal_lower for word in ['if', 'when', 'unless', 'provided']):
+                complexity_score += 2
+            
+            # Check for multiple steps
+            if any(word in goal_lower for word in ['then', 'after', 'before', 'next', 'finally']):
+                complexity_score += 2
+            
+            # Check for data processing
+            if any(word in goal_lower for word in ['extract', 'analyze', 'compare', 'filter', 'sort']):
+                complexity_score += 1
+            
+            # Check for navigation
+            if any(word in goal_lower for word in ['navigate', 'go to', 'visit', 'open']):
+                complexity_score += 1
+            
+            # Determine complexity level
+            if complexity_score <= 1:
+                return GoalComplexity.SIMPLE
+            elif complexity_score <= 3:
+                return GoalComplexity.MODERATE
+            else:
+                return GoalComplexity.COMPLEX
+                
+        except Exception as e:
+            logger.error(f"❌ Error detecting complexity: {str(e)}")
+            return GoalComplexity.SIMPLE
+    
+    async def _process_goal_async(self, goal_text: str) -> ProcessedGoal:
+        """
+        Process a natural language goal (async implementation).
         
         Args:
             goal_text (str): User's goal in natural language
